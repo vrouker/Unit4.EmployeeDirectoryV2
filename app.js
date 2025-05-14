@@ -1,34 +1,32 @@
 import express from "express";
-const app = express();
-export default app;
-
 import employees from "#db/employees";
+import employeesRouter from "#api/employeeRoutes"
 
-app.route("/").get((req, res) => {
-  res.send("Hello employees!");
-});
+const app = express();
 
-app.route("/employees").get((req, res) => {
-  res.send(employees);
-});
+    //BODY PARSKING MIDDLEWARE
+app.use(express.json());
 
-// Note: this middleware has to come first! Otherwise, Express will treat
-// "random" as the argument to the `id` parameter of /employees/:id.
-app.route("/employees/random").get((req, res) => {
-  const randomIndex = Math.floor(Math.random() * employees.length);
-  res.send(employees[randomIndex]);
-});
 
-app.route("/employees/:id").get((req, res) => {
-  const { id } = req.params;
+    //LOGGING MIDDLEWARE
+app.use((req, res, next)=>{
+  console.log(req.method, req.originalUrl)
+  next()
+})
 
-  // req.params are always strings, so we need to convert `id` into a number
-  // before we can use it to find the employee
-  const employee = employees.find((e) => e.id === +id);
+  //ROUTING 
+app.route('/').get((req,res)=>{
+  res.send(`Hello World!`)
+})
 
-  if (!employee) {
-    return res.status(404).send("Employee not found");
-  }
+app.use("/employee", employeesRouter)
 
-  res.send(employee);
-});
+
+
+//GENERAL ERROR HANDLING MIDDLEWARE
+app.use((err, req, res, next)=>{
+    console.log(err);
+    res.status(500).send(`AN ERROR HAS OCCURED ${err}`)
+})
+
+export default app;
