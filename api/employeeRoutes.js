@@ -26,7 +26,7 @@ router.get("/:id", (req, res)=>{
   res.send(employee);
 })
 
-//Adds an employee to the array -> IS NOT CURRENTLY WORKING
+//Adds an employee to the array 
 router.post("/", (req, res)=>{
     if (!req.body) {
         return res.status(404).send(`Requst Body Is Not Found`)
